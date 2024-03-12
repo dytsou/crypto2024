@@ -1,0 +1,3 @@
+[submodule "hw2/DES-Encryption"]
+	path = hw2/DES-Encryption
+	url = git@github.com:alimasry/DES-Encryption.git
