@@ -54,7 +54,6 @@ int main(int argc, char* argv[])
         ECB_decrypt(ciphertext, padding(i));
     // I of III
     getline(std::cin, plain);
-    ECB_encrypt(plain, keyStr);
     // ECB Mode
     ECB_encrypt(plain, keyStr);
     // CBC Mode
