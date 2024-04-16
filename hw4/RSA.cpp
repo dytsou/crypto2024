@@ -54,20 +54,13 @@ void decrypt(){
     int length;
     std::string hex_n, hex_d, cipher;
     std::cin >> length >> hex_n >> hex_d >> cipher;
-    CryptoPP::Integer n, d, e, c, m;
+    CryptoPP::Integer n, d, c, m;
     n = hex2int(hex_n);
     d = hex2int(hex_d);
     c = hex2int(cipher);
-    RSA::PrivateKey priKey;
-    for(int i = 1; i < (1<<31); i++){
-        e = Integer(i);
-        try{
-            priKey.Initialize(n, e, d);
-            break;
-        }
-        catch(const Exception& e){}
-    }
-    m = priKey.CalculateInverse(rng, c);
+    RSA::PublicKey pubKey;
+    pubKey.Initialize(n, d);
+    m = pubKey.ApplyFunction(c);
     std::cout << hex2ascii(int2hex(m)) << std::endl;
 }
 
