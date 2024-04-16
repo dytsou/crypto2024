@@ -17,4 +17,4 @@ III. Do the same as I and II but with stdin plaintext in I and stdin ciphertext 
 Onsite test: Decrypt the ciphertext using AES in CFB with `feedback size = 2, 4, or 8` and key is of form `Our key is: XXXX` where `XXXX` is a 4 HEX digit string.
 ## HW4 RSA using Crypto++ library
 
-Homework: Do either encryption or decryption using RSA, where the input format is `enc` `n` `e` `m` for encryption and `dec` `n` `d` `c` for decryption. We have to find the public key `e` for decryption.
+Homework: Do either encryption or decryption using RSA, where the input format is `enc` `n` `e` `m` for encryption and `dec` `n` `d` `c` for decryption.
