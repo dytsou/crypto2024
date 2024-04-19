@@ -50,7 +50,6 @@ void encrypt(){
 
 void decrypt(){
     using namespace CryptoPP;
-    AutoSeededRandomPool rng;
     int length;
     std::string hex_n, hex_d, cipher;
     std::cin >> length >> hex_n >> hex_d >> cipher;
