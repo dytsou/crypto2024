@@ -10,9 +10,11 @@
 #include <string>
 #include <fstream>
 #include <sstream>
-#define FILE "out.txt"
+#define FILE "test.txt"
+#define TRIALS 35
+#define TRIALS_u10 30
 
-std::string msgs[11] = {
+std::string msgs[20] = {
     "111550073",
     "00000000",
     "b4cc11f5",
@@ -45,6 +47,7 @@ struct Block {
 };
 
 Block blocks[20];
+int fail[20];
 
 void print(int num, const CryptoPP::byte digest[], const CryptoPP::byte nonce[]=nullptr) {
   printf("Block %d ", num);
@@ -89,6 +92,7 @@ void delete_lines(std::fstream &file, int num) {
 
 int main() {
     blocks->init();
+    memset(fail, 0, 20);
     CryptoPP::byte zero[CryptoPP::SHA256::DIGESTSIZE];
     memset(zero, 0, CryptoPP::SHA256::DIGESTSIZE);
 
@@ -128,21 +132,35 @@ int main() {
     file << msg << "\n";
     hex_encoder.PutMessageEnd(digest, CryptoPP::SHA256::DIGESTSIZE);
     file << "\n";
-
+    long long count = 0;
+    
     for (uint8_t num = 1; num < 12; ++num) {
         file << +num << "\n";
         hex_encoder.PutMessageEnd(digest, CryptoPP::SHA256::DIGESTSIZE);
         file << "\n";
-        long long count = 0;
         bool found = true;
         memcpy(preimage, digest, CryptoPP::SHA256::DIGESTSIZE);
         do {
-            if (count++ > (1LL << 40) && num >= 10) {
+            if (count++ > (1LL << TRIALS) && num >= 10) {
+                fail[num]++;
                 found = false;
+                count = -count;
                 break;
             }
-            else if (count++ > (1LL << 35) && num < 10) {
+            else if (count++ > (1LL << TRIALS_u10) && num < 10) {
+                fail[num]++;
                 found = false;
+                count = -count;
+                break;
+            }
+            else if(count == -1){
+                fail[num]++;
+                for(int i = 1; i < fail[num]+1; i*=2){
+                    delete_lines(file, num);
+                    num -=1;
+                    memcpy(digest, blocks[num].digest, CryptoPP::SHA256::DIGESTSIZE);
+                    memcpy(nonce, blocks[num].nonce, 4);
+                }
                 break;
             }
             prng.GenerateBlock(nonce, 4);
@@ -164,6 +182,8 @@ int main() {
         file << "\n";
         print(num, digest, nonce);
         blocks[num].store(num, digest, nonce);
+        count = 0;
+        fail[num] /= 2;
     }
 
     hex_encoder.Detach();
